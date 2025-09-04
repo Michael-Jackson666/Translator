@@ -21,19 +21,19 @@ Universal Translator 是一个基于 Transformer 架构的多语言机器翻译�
 
 ```
 Translator/
-├── LICENSE                         # 📄 开源许可证
-├── README.md                       # 📖 项目文档
-└── Eng2Fren/                      # 🇺🇸→🇫🇷 英法翻译模块
-    ├── transformer-d2l.py         # 🎯 主训练脚本
-    ├── simple_translator.py       # 🚀 交互式翻译器（推荐）
-    ├── mini_translator.py         # ⚡ 极简翻译器
-    ├── batch_translate.py         # 📦 批量翻译工具
-    ├── transformer_inference.py   # 🔧 完整推理模块
-    ├── transformer.py             # 🏗️ Transformer模型实现
-    ├── transformer_fra_eng.pth    # 💾 训练好的模型文件
-    ├── example_input.txt           # 📝 示例输入文件
-    ├── example_input_translated.txt # 📝 示例翻译结果
-    └── batch_translation_results.txt # 📊 批量翻译结果
+├── LICENSE                            # 📄 开源许可证
+├── README.md                          # 📖 项目文档
+└── Eng2Fren/                          # 🇺🇸→🇫🇷 英法翻译模块
+    ├── transformer-d2l.py             # 🎯 主训练脚本
+    ├── simple_translator.py           # 🚀 交互式翻译器（推荐）
+    ├── mini_translator.py             # ⚡ 极简翻译器
+    ├── batch_translate.py             # 📦 批量翻译工具
+    ├── transformer_inference.py       # 🔧 完整推理模块
+    ├── transformer.py                 # 🏗️ Transformer模型实现
+    ├── transformer_fra_eng.pth        # 💾 训练好的模型文件
+    ├── example_input.txt              # 📝 示例输入文件
+    ├── example_input_translated.txt   # 📝 示例翻译结果
+    └── batch_translation_results.txt  # 📊 批量翻译结果
 ```
 
 ## 🚀 快速开始
