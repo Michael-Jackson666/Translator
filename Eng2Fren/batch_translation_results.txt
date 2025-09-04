@@ -1,0 +1,48 @@
+批量翻译结果
+==================================================
+
+ 1. 英语: hello .
+    法语: salut !
+------------------------------
+ 2. 英语: how are you ?
+    法语: comment êtes-vous ?
+------------------------------
+ 3. 英语: i am fine .
+    法语: je suis bien beau .
+------------------------------
+ 4. 英语: good morning .
+    法语: bonsoir , le matin .
+------------------------------
+ 5. 英语: see you later .
+    法语: vous voyez plus tard .
+------------------------------
+ 6. 英语: i love you .
+    法语: j'adore vous .
+------------------------------
+ 7. 英语: thank you .
+    法语: merci !
+------------------------------
+ 8. 英语: what is your name ?
+    法语: quel est ton nom ?
+------------------------------
+ 9. 英语: i am learning french .
+    法语: je suis français .
+------------------------------
+10. 英语: this is a beautiful day .
+    法语: c'est une belle journée .
+------------------------------
+11. 英语: where are you from ?
+    法语: où êtes-vous ?
+------------------------------
+12. 英语: i like to read books .
+    法语: j'aime lire des livres .
+------------------------------
+13. 英语: the weather is nice today .
+    法语: le temps est beau aujourd'hui .
+------------------------------
+14. 英语: can you help me ?
+    法语: pouvez-vous m'aider ?
+------------------------------
+15. 英语: i want to go home .
+    法语: je veux aller chez moi .
+------------------------------
