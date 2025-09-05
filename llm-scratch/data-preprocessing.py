@@ -128,10 +128,36 @@ data_iter = iter(dataloader)
 # print("\nTargets:\n", targets)
 
 # turn IDs to embeddings vectors
-input_ids = torch.tensor([2, 3, 5, 1])
-vocalb_size, output_dim = 6, 3
-torch.manual_seed(123)
-embedding_layer = torch.nn.Embedding(vocalb_size, output_dim)
+# input_ids = torch.tensor([2, 3, 5, 1])
+# vocalb_size, output_dim = 6, 3
+# torch.manual_seed(123)
+# embedding_layer = torch.nn.Embedding(vocalb_size, output_dim)
 # print(embedding_layer.weight)
-print(embedding_layer(torch.tensor([3])))
+# print(embedding_layer(torch.tensor([3])))
+# print(embedding_layer(input_ids))
 
+vocab_size, output_dim = 50257, 256
+token_embedding_layer = torch.nn.Embedding(vocab_size, output_dim)
+
+max_length = 4
+dataloader = create_dataloader_v1(
+    raw_text, batch_size=8, max_length=max_length, stride=max_length,
+    shuffle=False
+)
+data_iter = iter(dataloader)
+inputs, targets = next(data_iter)
+# print("Inputs:\n", inputs)
+# print("\nTargets:\n", targets)
+
+token_embeddings = token_embedding_layer(inputs)
+print(token_embeddings.shape)  # torch.Size([8, 4, 256])
+
+# 构造绝对位置信息
+context_length = max_length
+pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
+pos_embeddings = pos_embedding_layer(torch.arange(context_length))
+print(pos_embeddings.shape)  # torch.Size([4, 256])
+
+# 将词嵌入和位置嵌入相加
+input_embeddings = token_embeddings + pos_embeddings
+print(input_embeddings.shape)  # torch.Size([8, 4, 256])
