@@ -156,5 +156,15 @@ mha = MultiHeadAttention(d_in, d_out, context_length, dropout=0.0, num_heads=2)
 
 context_vecs = mha(batch)
 
-print(context_vecs)
-print("context_vecs.shape:", context_vecs.shape)
+# print(context_vecs)
+# print("context_vecs.shape:", context_vecs.shape)
+
+a = torch.tensor([[[[0.2745, 0.6584, 0.2775, 0.8573],
+                    [0.8993, 0.0390, 0.9268, 0.7388],
+                    [0.7179, 0.7058, 0.9156, 0.4340]],
+
+                   [[0.0772, 0.3565, 0.1479, 0.5331],
+                    [0.4066, 0.2318, 0.4545, 0.9737],
+                    [0.4606, 0.5159, 0.4220, 0.5786]]]])
+
+print(a @ a.transpose(2, 3))
