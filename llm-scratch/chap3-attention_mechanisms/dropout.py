@@ -51,7 +51,7 @@ example = torch.ones(6, 6)
 
 # print(dropout(attn_weights))
 
-batch = torch.stack((inputs, inputs), dim=0) 
+batch = torch.stack((inputs, inputs), dim=0) # 两个文本输入，复制了一遍
 print("Batch shape:", batch.shape)
 
 # A compact causal attention class
