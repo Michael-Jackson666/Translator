@@ -38,10 +38,21 @@ queries = sa_v2.W_query(inputs)
 keys  = sa_v2.W_key(inputs)
 attn_scores = queries @ keys.T
 attn_weights = torch.softmax(attn_scores / keys.shape[-1]**0.5, dim=-1)
-print("Attention weights before masking:\n", attn_weights)
+# print("Attention weights before masking:\n", attn_weights)
 
 context_length = attn_scores.shape[0]
 mask_simple = torch.tril(torch.ones((context_length, context_length)))
-print("Mask:\n", mask_simple)
+# print("Mask:\n", mask_simple)
 masked_simple = attn_weights * mask_simple
-print("Masked attention weights (simple):\n", masked_simple)
+# print("Masked attention weights (simple):\n", masked_simple)
+
+# 归一化
+musked_simple_norm = masked_simple / masked_simple.sum(dim=-1, keepdim=True)
+print("Masked attention weights (simple, normalized):\n", musked_simple_norm)
+
+# 更加高效的掩码技术（用-inf）
+mask = torch.triu(torch.ones(context_length, context_length), diagonal = 1)
+masked = attn_scores.masked_fill(mask.bool(), -torch.inf)
+# print(masked)
+attn_weights = torch.softmax(masked / keys.shape[-1]**0.5, dim=-1)
+print("Attention weights after masking:\n", attn_weights)

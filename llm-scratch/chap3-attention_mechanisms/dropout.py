@@ -1,26 +1,14 @@
 import torch
-
-# A compacts self-attention class
 import torch.nn as nn
-class SelfAttention_v1(nn.Module):
-    def __init__(self, d_in, d_out):
-        super().__init__()
-        self.W_query = nn.Parameter(torch.randn(d_in, d_out))
-        self.W_key   = nn.Parameter(torch.randn(d_in, d_out))
-        self.W_value = nn.Parameter(torch.randn(d_in, d_out))
-    
-    def forward(self, x):
-        # x shape: (seq_len, d_in)
-        queries = x @ self.W_query  # (seq_len, d_out)
-        keys    = x @ self.W_key    # (seq_len, d_out)
-        values  = x @ self.W_value  # (seq_len, d_out)
-        attn_scores = queries @ keys.T # omega: (seq_len, seq_len)
-        attn_weights = torch.softmax(
-            attn_scores / keys.shape[-1]**0.5, dim=-1
-            )  # (seq_len, seq_len)
-        context_vec = attn_weights @ values  # (seq_len, d_out)
-        return context_vec
-    
+
+inputs = torch.tensor(
+  [[0.43, 0.15, 0.89], # Your     (x^1)
+   [0.55, 0.87, 0.66], # journey  (x^2)
+   [0.57, 0.85, 0.64], # starts   (x^3)
+   [0.22, 0.58, 0.33], # with     (x^4)
+   [0.77, 0.25, 0.10], # one      (x^5)
+   [0.05, 0.80, 0.55]] # step     (x^6)
+)
 
 #  A self-attention class using Pytorch's Linear layers
 class SelfAttention_v2(nn.Module):
@@ -40,7 +28,32 @@ class SelfAttention_v2(nn.Module):
         )
         context_vec = attn_weights @ values
         return context_vec
-    
+
+d_in, d_out = inputs.shape[1], 2
+torch.manual_seed(123)
+sa_v2 = SelfAttention_v2(d_in, d_out)
+
+queries = sa_v2.W_query(inputs)
+keys  = sa_v2.W_key(inputs)
+attn_scores = queries @ keys.T
+
+context_length = attn_scores.shape[0]
+# 更加高效的掩码技术（用-inf）
+mask = torch.triu(torch.ones(context_length, context_length), diagonal = 1)
+masked = attn_scores.masked_fill(mask.bool(), -torch.inf)
+attn_weights = torch.softmax(masked / keys.shape[-1]**0.5, dim=-1)
+
+# dropout技术实现
+torch.manual_seed(123)
+dropout = torch.nn.Dropout(0.5) 
+example = torch.ones(6, 6) 
+# print(dropout(example))
+
+# print(dropout(attn_weights))
+
+batch = torch.stack((inputs, inputs), dim=0) 
+print("Batch shape:", batch.shape)
+
 # A compact causal attention class
 class CausalAttention(nn.Module):
     def __init__(self, d_in, d_out, context_length,
@@ -65,7 +78,7 @@ class CausalAttention(nn.Module):
 
         attn_scores = queries @ keys.transpose(1, 2) 
         attn_scores.masked_fill_(
-            self.mask.bool()[num_tokens, num_tokens], -torch.inf)
+            self.mask.bool()[:num_tokens, :num_tokens], -torch.inf)
         attn_weights = torch.softmax(
             attn_scores / keys.shape[-1]**0.5, dim=-1
         )
@@ -73,3 +86,12 @@ class CausalAttention(nn.Module):
 
         context_vec = attn_weights @ values
         return context_vec
+    
+
+# 测试
+torch.manual_seed(123)
+context_length = batch.shape[1]
+ca = CausalAttention(d_in, d_out, context_length, dropout=0.0)
+context_vec = ca(batch)
+print("Context vector shape:", context_vec.shape)
+print("Context vector:", context_vec)
