@@ -1,8 +1,6 @@
-# A placeholder for GPT model architecture class
 import torch
 import torch.nn as nn
 
-# add an important calss in chapter 3
 # An efficient multi-head attention class
 class MultiHeadAttention(nn.Module):
     def __init__(self, d_in, d_out, context_length, dropout, num_heads, qkv_bias=False):
@@ -55,7 +53,7 @@ class MultiHeadAttention(nn.Module):
         context_vec = self.out_proj(context_vec)
 
         return context_vec
-
+    
 # config
 GPT_CONFIG_124M = {
  "vocab_size": 50257, # Vocabulary size
@@ -67,47 +65,6 @@ GPT_CONFIG_124M = {
  "qkv_bias": False # Query-Key-Value bias
 }
 
-class DummyGPTModel(nn.Module):
-    def __init__(self, cfg):
-        super().__init__()
-        self.tok_emb = nn.Embedding(cfg["vocab_size"], cfg["emb_dim"])
-        self.pos_emb = nn.Embedding(cfg["context_length"], cfg["emb_dim"])
-        self.drop_emb = nn.Dropout(cfg["drop_rate"])
-        
-        self.trf_blocks = nn.Sequential(
-            *[DummyTransformerBlock(cfg) for _ in range(cfg["n_layers"])])
-        self.final_norm = DummyLayerNorm(cfg["emb_dim"])
-        self.out_head = nn.Linear(
-            cfg["emb_dim"], cfg["vocab_size"], bias=False
-        )
-
-    def forward(self, in_idx):
-        batch_size, seq_len = in_idx.shape
-        tok_embeds = self.tok_emb(in_idx)
-        pos_embeds = self.pos_emb(torch.arange(seq_len, device=in_idx.device))
-        x = tok_embeds + pos_embeds
-        x = self.drop_emb(x)
-        x = self.trf_blocks(x)
-        x = self.final_norm(x)
-        logits = self.out_head(x)
-        return logits
-
-
-class DummyTransformerBlock(nn.Module):
-    def __init__(self, cfg):
-        super().__init__()
-
-    def forward(self, x):
-        return x
-
-
-class DummyLayerNorm(nn.Module):
-    def __init__(self, normalized_shape, eps=1e-5):
-        super().__init__()
-
-    def forward(self, x):
-        return x
-    
 # A layer normalization class
 class LayerNorm(nn.Module):
     def __init__(self, emb_dim):
@@ -146,30 +103,7 @@ class FeedForward(nn.Module):
     def forward(self, x):
         return self.layers(x)
     
-# A neural network to illustrate shortcut connections
-class ExampleDeepNeuralNetwork(nn.Module):
-    def __init__(self, layer_sizes, use_shortcut):
-        super().__init__()
-        self.use_shortcut = use_shortcut
-        self.layers = nn.ModuleList([
-            nn.Sequential(nn.Linear(layer_sizes[0], layer_sizes[1]), GELU()),
-            nn.Sequential(nn.Linear(layer_sizes[1], layer_sizes[2]), GELU()),
-            nn.Sequential(nn.Linear(layer_sizes[2], layer_sizes[3]), GELU()),
-            nn.Sequential(nn.Linear(layer_sizes[3], layer_sizes[4]), GELU()),
-            nn.Sequential(nn.Linear(layer_sizes[4], layer_sizes[5]), GELU())
-        ])
-
-    def forward(self, x):
-        for layer in self.layers:
-            # Compute the output of the current layer
-            layer_output = layer(x)
-            # Check if shortcut can be applied
-            if self.use_shortcut and x.shape == layer_output.shape:
-                x = x + layer_output
-            else:
-                x = layer_output
-        return x
-    
+# new in this file:
 # the transformer block component of GPT
 class TransformerBlock(nn.Module):
     def __init__(self, cfg):
@@ -202,3 +136,10 @@ class TransformerBlock(nn.Module):
         x = x + shortcut  # Add the original input back
 
         return x
+    
+# example usage
+torch.manual_seed(123)
+x = torch.rand(2, 4, 768)  # [batch_size, num_tokens, emb_size]
+block = TransformerBlock(GPT_CONFIG_124M)
+output = block(x)
+print(output.shape)  # should be [2, 4, 768]
