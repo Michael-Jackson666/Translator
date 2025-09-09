@@ -1,19 +1,6 @@
+# A placeholder for GPT model architecture class
 import torch
 import torch.nn as nn
-
-# example batch input
-import tiktoken
-
-tokenizer = tiktoken.get_encoding("gpt2")
-
-batch = []
-
-txt1 = "Every effort moves you"
-txt2 = "Every day holds a"
-
-batch.append(torch.tensor(tokenizer.encode(txt1)))
-batch.append(torch.tensor(tokenizer.encode(txt2)))
-batch = torch.stack(batch, dim=0)
 
 # add an important calss in chapter 3
 # An efficient multi-head attention class
@@ -250,8 +237,7 @@ class TransformerBlock(nn.Module):
         x = x + shortcut  # Add the original input back
 
         return x
-
-# new in this file:
+    
 # The GPT model architecture implementation
 class GPTModel(nn.Module):
     def __init__(self, cfg):
@@ -279,76 +265,3 @@ class GPTModel(nn.Module):
         logits = self.out_head(x)
         return logits
     
-# example usage
-torch.manual_seed(123)
-model = GPTModel(GPT2_XL_CONFIG)
-
-out = model(batch)
-# print("Input batch:\n", batch)
-# print("\nOutput shape:", out.shape)
-# print(out)
-
-total_params = sum(p.numel() for p in model.parameters())
-print(f"Total number of parameters: {total_params:,}")
-
-# compute number of parameters excluding output head
-total_params_gpt2 = (
- total_params - sum(p.numel()
- for p in model.out_head.parameters())
-)
-print(f"Number of trainable parameters "
- f"considering weight tying: {total_params_gpt2:,}"
-)
-
-# compute number of parameters in feed forward modules
-ff_params = sum(
-    p.numel() for block in model.trf_blocks
-    for p in block.ff.parameters()
-)
-print(f"Number of parameters in feed forward modules: {ff_params:,}")
-
-# compute number of parameters in attention modules
-attn_params = sum(
-    p.numel() for block in model.trf_blocks
-    for p in block.att.parameters()
-)
-print(f"Number of parameters in attention modules: {attn_params:,}")
-
-# compute the memory requirements of the model
-total_size_bytes = total_params * 4
-total_size_mb = total_size_bytes / (1024 ** 2)
-print(f"Approximate memory requirement for the model: {total_size_mb:.2f} MB")
-
-# other bigger models
-# GPT-2 Medium
-GPT2_MEDIUM_CONFIG = {
- "vocab_size": 50257,
- "context_length": 1024,
- "emb_dim": 1024,
- "n_heads": 16,
- "n_layers": 24,
- "drop_rate": 0.1,
- "qkv_bias": False
-}
-
-# GPT-2 Large
-GPT2_LARGE_CONFIG = {
- "vocab_size": 50257,
- "context_length": 1024,
- "emb_dim": 1280,
- "n_heads": 20,
- "n_layers": 36,
- "drop_rate": 0.1,
- "qkv_bias": False
-}
-
-# GPT-2 XL
-GPT2_XL_CONFIG = {
- "vocab_size": 50257,
- "context_length": 1024,
- "emb_dim": 1600,
- "n_heads": 25,
- "n_layers": 48,
- "drop_rate": 0.1,
- "qkv_bias": False
-}

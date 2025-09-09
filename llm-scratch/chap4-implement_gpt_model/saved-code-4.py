@@ -57,6 +57,7 @@ class MultiHeadAttention(nn.Module):
         return context_vec
 
 # config
+# GPT-2 Small
 GPT_CONFIG_124M = {
  "vocab_size": 50257, # Vocabulary size
  "context_length": 1024, # Context length
@@ -65,6 +66,40 @@ GPT_CONFIG_124M = {
  "n_layers": 12, # Number of layers
  "drop_rate": 0.1, # Dropout rate
  "qkv_bias": False # Query-Key-Value bias
+}
+
+# other bigger models
+# GPT-2 Medium
+GPT2_MEDIUM_CONFIG = {
+ "vocab_size": 50257,
+ "context_length": 1024,
+ "emb_dim": 1024,
+ "n_heads": 16,
+ "n_layers": 24,
+ "drop_rate": 0.1,
+ "qkv_bias": False
+}
+
+# GPT-2 Large
+GPT2_LARGE_CONFIG = {
+ "vocab_size": 50257,
+ "context_length": 1024,
+ "emb_dim": 1280,
+ "n_heads": 20,
+ "n_layers": 36,
+ "drop_rate": 0.1,
+ "qkv_bias": False
+}
+
+# GPT-2 XL
+GPT2_XL_CONFIG = {
+ "vocab_size": 50257,
+ "context_length": 1024,
+ "emb_dim": 1600,
+ "n_heads": 25,
+ "n_layers": 48,
+ "drop_rate": 0.1,
+ "qkv_bias": False
 }
 
 class DummyGPTModel(nn.Module):
