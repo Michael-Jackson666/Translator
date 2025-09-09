@@ -352,3 +352,48 @@ GPT2_XL_CONFIG = {
  "drop_rate": 0.1,
  "qkv_bias": False
 }
+
+# 只是上面的模型是不够的，展示目前最大的开源模型
+# Meta Llama 3 70B (Instruct version)
+# 性能极强的开源模型，应用广泛
+LLAMA_3_70B_CONFIG = {
+    "vocab_size": 128256,           # 词汇表大小显著增加，能更高效地处理多语言和代码
+    "context_length": 8192,         # 上下文长度，是 GPT-2 的 8 倍 (社区已扩展至更长)
+    "emb_dim": 8192,                # 嵌入维度 (隐藏层大小)，非常宽的网络
+    "n_layers": 80,                 # 模型层数，非常深
+    "n_heads": 64,                  # 主注意力头的数量
+    "n_kv_heads": 8,                # 键/值头的数量 (使用了分组查询注意力 GQA 来加速推理)
+    "ffn_dim_multiplier": 1.3,      # FFN (前馈网络) 中间层的维度乘数，不直接给出而是通过计算
+    "rope_theta": 500000.0,         # RoPE 旋转位置编码的 base alpha
+    "norm_eps": 1e-5,               # RMSNorm 中的 epsilon 值
+    "total_params": "约 700 亿 (70B)" # 总参数量
+}
+
+# Mistral AI - Mixtral 8x22B
+# 顶级的混合专家（MoE）开源模型，推理效率高
+MIXTRAL_8x22B_CONFIG = {
+    "vocab_size": 32768,
+    "context_length": 65536,      # 64K 超长上下文
+    "emb_dim": 6144,
+    "n_layers": 56,
+    "n_heads": 48,
+    "n_kv_heads": 8,              # 同样使用了 GQA
+    "ffn_dim": 16384,             # 直接给出了 FFN 中间层大小
+    "moe_num_experts": 8,         # 共有 8 个专家网络
+    "moe_top_k": 2,               # 每个 token 会选择最相关的 2 个专家来处理
+    "total_params": "约 1410 亿 (141B)", # 总参数量 (很多是稀疏的)
+    "active_params": "约 390 亿 (39B)"  # 每次前向传播时实际激活的参数量
+}
+
+# xAI Grok-1 (Base Model)
+# 目前参数量最大的开源模型
+GROK_1_CONFIG = {
+    "vocab_size": 128000,
+    "context_length": 8192,
+    "emb_dim": 6144,
+    "n_layers": 64,
+    "n_heads": 48,
+    "n_kv_heads": 8,              # 同样使用了 GQA
+    "ffn_dim_multiplier": 8/3,    # FFN 中间层的维度乘数
+    "total_params": "约 3140 亿 (314B)" # 总参数量
+}
