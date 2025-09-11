@@ -1,0 +1,81 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyTorch模型文件
+*.pth
+*.pt
+*.safetensors
+*.bin
+*.model
+
+# 数据文件
+*.txt
+*.csv
+*.json
+*.pkl
+*.pickle
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# 环境变量
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# 大文件和模型
+model_and_optimizer*.pth
+gpt2/
+*.safetensors
+transformers_cache/
+
+# 日志和图片
+*.log
+*.png
+*.pdf
+*.jpg
+*.jpeg
+
+# 临时文件
+*.tmp
+*.temp
