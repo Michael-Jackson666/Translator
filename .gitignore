@@ -68,6 +68,10 @@ model_and_optimizer*.pth
 gpt2/
 *.safetensors
 transformers_cache/
+*.ckpt*
+*.data-*
+*.meta
+*.index
 
 # 日志和图片
 *.log
