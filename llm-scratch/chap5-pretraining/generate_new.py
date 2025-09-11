@@ -218,7 +218,7 @@ num_epochs = 10
 #     start_context="Every effort moves you", tokenizer=tokenizer
 # )
 
-# new in this file: temperature scaling for text generation
+# new in this file: top-k sampling for text generation
 vocab = {
     "closer":0,
     "every":1,
@@ -243,48 +243,57 @@ torch.manual_seed(123)
 probas = torch.softmax(next_token_logits, dim=0)
 # next_token_id = torch.argmax(probas).item()
 
-# The next generated token is then as follows:
-# print(inverse_vocab[next_token_id])
+top_k = 3
+top_logits, top_pos = torch.topk(next_token_logits, top_k)
+# print("Top logits:", top_logits)
+# print("Top positions:", top_pos)
 
-# torch.manual_seed(123)
-# next_token_id = torch.multinomial(probas, num_samples=1).item()
-# print(inverse_vocab[next_token_id])
+new_logits = torch.where(
+    condition=next_token_logits < top_logits[-1],
+    input=torch.tensor(float('-inf')),
+    other=next_token_logits
+)
+# print("New logits:", new_logits)
 
-def print_sampled_tokens(probas):
-    torch.manual_seed(123) # Manual seed for reproducibility
-    sample = [torch.multinomial(probas, num_samples=1).item() for i in range(1_000)]
-    sampled_ids = torch.bincount(torch.tensor(sample), minlength=len(probas))
-    for i, freq in enumerate(sampled_ids):
-        print(f"{freq} x {inverse_vocab[i]}")
+topk_probas = torch.softmax(new_logits, dim=0)
+# print("Top-k probabilities:", topk_probas)
 
-# print_sampled_tokens(probas)
+# new in this file: generate text with temperature scaling and top-k sampling
+# A modified text generation function with more diversity
+def generate(model, idx, max_new_tokens, context_size,
+             temperature=0.0, top_k=None, eos_id=None):
+    for _ in range(max_new_tokens):
+        idx_cond = idx[:, -context_size:]
+        with torch.no_grad():
+            logits = model(idx_cond)
+        logits = logits[:, -1, :]
+        if top_k is not None:
+            top_logits, _ = torch.topk(logits, top_k)
+            min_val = top_logits[:, -1]
+            logits = torch.where(
+                logits < min_val,
+                torch.tensor(float('-inf')).to(logits.device),
+                logits
+            )
+        if temperature > 0.0:
+            logits = logits / temperature
+            probs = torch.softmax(logits, dim=-1)
+            idx_next = torch.multinomial(probs, num_samples=1)
+        else:
+            idx_next = torch.argmax(logits, dim=-1, keepdim=True)
+        if idx_next == eos_id:
+            break
+        idx = torch.cat((idx, idx_next), dim=1)
+    return idx
 
-def softmax_with_temperature(logits, temperature):
-    scaled_logits = logits / temperature
-    return torch.softmax(scaled_logits, dim=0)
-
-# Temperature values
-temperatures = [1, 0.1, 5]  # Original, higher confidence, and lower confidence
-
-# Calculate scaled probabilities
-scaled_probas = [softmax_with_temperature(next_token_logits, T) for T in temperatures]
-
-# Plotting
-import matplotlib.pyplot as plt
-x = torch.arange(len(vocab))
-bar_width = 0.15
-
-fig, ax = plt.subplots(figsize=(5, 3))
-for i, T in enumerate(temperatures):
-    rects = ax.bar(x + i * bar_width, scaled_probas[i], bar_width, label=f'Temperature = {T}')
-
-ax.set_ylabel('Probability')
-ax.set_xticks(x)
-ax.set_xticklabels(vocab.keys(), rotation=90)
-ax.legend()
-
-plt.tight_layout()
-plt.savefig("temperature-plot.pdf")
-plt.show()
-
-# print_sampled_tokens(scaled_probas[1])  # T=1
+# example usage
+torch.manual_seed(123)
+token_ids = generate(
+    model=model,
+    idx=text_to_token_ids("Every effort moves you", tokenizer),
+    max_new_tokens=15,
+    context_size=GPT_CONFIG_124M["context_length"],
+    top_k=25,
+    temperature=0.5,
+)
+print("Output text:\n", token_ids_to_text(token_ids, tokenizer))
