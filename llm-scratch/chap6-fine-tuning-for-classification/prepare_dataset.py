@@ -71,6 +71,6 @@ def random_split(df, train_frac, validation_frac):
 
 train_df, validation_df, test_df = random_split(balanced_df, 0.7, 0.1)
 
-train_df.to_csv("train.tsv", index=None)
-validation_df.to_csv("validation.tsv", index=None)
-test_df.to_csv("test.tsv", index=None)
+train_df.to_csv("train.csv", index=None)
+validation_df.to_csv("validation.csv", index=None)
+test_df.to_csv("test.csv", index=None)
