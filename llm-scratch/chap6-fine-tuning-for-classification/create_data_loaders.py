@@ -53,3 +53,7 @@ class SpamDataset(Dataset):
         # Note: A more pythonic version to implement this method
         # is the following, which is also used in the next chapter:
         # return max(len(encoded_text) for encoded_text in self.encoded_texts)
+
+
+train_dataset = SpamDataset("train.csv", tokenizer, max_length=None)
+print(train_dataset.max_length)
