@@ -1,6 +1,6 @@
 import tiktoken 
 tokenizer = tiktoken.get_encoding("gpt2")
-print(tokenizer.encode("<|endoftext|>", allowed_special={"<|endoftext|>"}))
+# print(tokenizer.encode("<|endoftext|>", allowed_special={"<|endoftext|>"}))
 
 import pandas as pd
 # Setting up a Pytorch Dataset class
@@ -56,4 +56,53 @@ class SpamDataset(Dataset):
 
 
 train_dataset = SpamDataset("train.csv", tokenizer, max_length=None)
-print(train_dataset.max_length)
+# print(train_dataset.max_length)
+
+val_dataset = SpamDataset(
+    csv_file="validation.csv",
+    max_length=train_dataset.max_length,
+    tokenizer=tokenizer
+)
+test_dataset = SpamDataset(
+    csv_file="test.csv",
+    max_length=train_dataset.max_length,
+    tokenizer=tokenizer
+)
+
+# creating PyTorch data loaders
+from torch.utils.data import DataLoader
+
+num_workers = 0
+batch_size = 8
+torch.manual_seed(123)
+
+train_loader = DataLoader(
+    dataset=train_dataset,
+    batch_size=batch_size,
+    shuffle=True,
+    num_workers=num_workers,
+    drop_last=True,
+)
+
+val_loader = DataLoader(
+    dataset=val_dataset,
+    batch_size=batch_size,
+    num_workers=num_workers,
+    drop_last=False,
+)
+
+test_loader = DataLoader(
+    dataset=test_dataset,
+    batch_size=batch_size,
+    num_workers=num_workers,
+    drop_last=False,
+)
+
+for input_batch, label_batch in train_loader:
+    pass
+print(f"Input batch shape: {input_batch.shape}")  # [batch_size, seq_len]
+print(f"Label batch shape: {label_batch.shape}")  # [batch_size]x
+
+print(f"{len(train_loader)} training batches")
+print(f"{len(val_loader)} validation batches")
+print(f"{len(test_loader)} test batches")
