@@ -92,3 +92,9 @@ transformers_cache/
 *.tar
 *.tar.gz
 *.tar.bz2
+
+# 数据集文件
+sms_spam_collection/
+SMSSpamCollection.tsv
+*.tsv
+readme
