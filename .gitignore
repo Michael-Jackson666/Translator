@@ -34,6 +34,7 @@ MANIFEST
 *.json
 *.pkl
 *.pickle
+*.tsv
 
 # Jupyter Notebook
 .ipynb_checkpoints
